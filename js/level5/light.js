@@ -30,8 +30,6 @@ Level5.Light.prototype.shoot = function (scene) {
   var raycaster = new THREE.Raycaster(this.startPoint, this.direction);
   var intersections = raycaster.intersectObjects(objects, true);
 
-  console.log(intersections);
-
   // find a collision point with face.
   var intersection = null;
 
@@ -57,7 +55,6 @@ Level5.Light.prototype.shoot = function (scene) {
   var collisionPoint2d = intersection.point.clone();
   collisionPoint2d.z = 0;
 
-/*
   var reflectionVector = this.direction.clone();
   reflectionVector.reflect(collisionNormal);
   // for 2d simulation
@@ -73,7 +70,6 @@ Level5.Light.prototype.shoot = function (scene) {
   });
 
   reflectedLight.shoot(scene);
-*/
 
   // refraction
   // direction of light? inside to outside, or not.
@@ -83,7 +79,6 @@ Level5.Light.prototype.shoot = function (scene) {
 
   var collisionNormalClone = collisionNormal.clone();
   // inside to outside
-  console.log(incidenceAngle * 180 / Math.PI);
   if (incidenceAngle > Math.PI / 2) {
     collisionNormalClone.negate();
     refractionIndex = 1.0 / refractionIndex;
@@ -111,8 +106,6 @@ Level5.Light.prototype.shoot = function (scene) {
     direction: refractionDirection,
     life: this.life - 1
   });
-
-  console.log(refractedLight);
 
   refractedLight.shoot(scene);
 };

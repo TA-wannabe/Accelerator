@@ -11,23 +11,24 @@ function onReady () {
   renderer.domElement.style.left = "0px";
 
   renderer.setSize( width, height );
+  renderer.setClearColor(0x000000);
+
   document.body.appendChild( renderer.domElement );
 
   var bubble = new Level5.WaterBubble(100, 32, 32);
   scene.add(bubble);
+  bubble.translate(new THREE.Vector3(0, -50, 0));
 
-/*
   var bubble = new Level5.WaterBubble(100, 32, 32);
   scene.add(bubble);
   bubble.translate(new THREE.Vector3(-200, 200, 0));
-*/
 
-  for (var i=400; i<700; i += 100) {
+  for (var i=400; i<700; i += 10) {
     var light = new Level5.Light({
       waveLength: i,
-      startPoint: new THREE.Vector3(-1000, 150, 0),
-      direction: new THREE.Vector3(1, -0.1, 0),
-      life: 3
+      startPoint: new THREE.Vector3(-1000, 0, 0),
+      direction: new THREE.Vector3(1, 0, 0),
+      life: 9
     });
     light.shoot(scene);
   }

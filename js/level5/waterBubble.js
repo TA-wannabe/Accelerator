@@ -4,7 +4,7 @@ Level5.WaterBubble = function (radius, widthSegments, heightSegments) {
     new THREE.MeshBasicMaterial({
     color: 0x00a86b,
     transparent: true,
-    opacity: 0.5,
+    opacity: 0.8,
     side: THREE.DoubleSide
   }));
 
