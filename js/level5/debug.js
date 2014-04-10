@@ -14,9 +14,9 @@ Level5.Debug.drawPoint = function (scene, position) {
   scene.add( circle );
 };
 
-Level5.Debug.drawHalfLine = function (scene, startPoint, direction) {
+Level5.Debug.drawHalfLine = function (scene, startPoint, direction, color) {
   var material = new THREE.LineBasicMaterial({
-    color: 0xff0000
+    color: color,
   });
 
   var geometry = new THREE.Geometry();
@@ -28,9 +28,9 @@ Level5.Debug.drawHalfLine = function (scene, startPoint, direction) {
   scene.add( line );
 };
 
-Level5.Debug.drawSegment = function (scene, startPoint, endPoint) {
+Level5.Debug.drawSegment = function (scene, startPoint, endPoint, color) {
   var material = new THREE.LineBasicMaterial({
-    color: 0xff0000
+    color: color,
   });
 
   var geometry = new THREE.Geometry();

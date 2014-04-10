@@ -45,22 +45,25 @@ Level5.Light.prototype.shoot = function (scene) {
   }
 
   if (intersection === null) {
-    Level5.Debug.drawHalfLine(scene, this.startPoint, this.direction);
+    Level5.Debug.drawHalfLine(scene, this.startPoint, this.direction, Level5.Helper.waveLengthToRGBA(this.waveLength));
     return;
   }
-  Level5.Debug.drawSegment(scene, this.startPoint, intersection.point);
+
+  Level5.Debug.drawSegment(scene, this.startPoint, intersection.point, Level5.Helper.waveLengthToRGBA(this.waveLength));
+
 
   // reflection
   var collisionNormal = intersection.face.normal;
+  var collisionPoint2d = intersection.point.clone();
+  collisionPoint2d.z = 0;
 
+/*
   var reflectionVector = this.direction.clone();
   reflectionVector.reflect(collisionNormal);
   // for 2d simulation
   reflectionVector.z = 0;
   reflectionVector.normalize();
 
-  var collisionPoint2d = intersection.point.clone();
-  collisionPoint2d.z = 0;
 
   var reflectedLight = new Level5.Light({
     waveLength: this.waveLength,
@@ -70,14 +73,16 @@ Level5.Light.prototype.shoot = function (scene) {
   });
 
   reflectedLight.shoot(scene);
+*/
 
   // refraction
   // direction of light? inside to outside, or not.
-  var incidenceAngle = this.direction.clone().negate().angleTo(collisionNormal);
+  var incidenceAngle = collisionNormal.clone().negate().angleTo(this.direction);
   var refractionIndex = Level5.Helper.calculateRefractionIndexWithWaveLength(intersection.object.refractionIndex,
       this.waveLength);
 
   // inside to outside
+  console.log(incidenceAngle * 180 / Math.PI);
   if (incidenceAngle > Math.PI / 2) {
     collisionNormal.negate();
     refractionIndex = 1.0 / refractionIndex;
@@ -105,6 +110,8 @@ Level5.Light.prototype.shoot = function (scene) {
     direction: refractionDirection,
     life: this.life - 1
   });
+
+  console.log(refractedLight);
 
   refractedLight.shoot(scene);
 };

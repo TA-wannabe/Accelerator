@@ -16,17 +16,21 @@ function onReady () {
   var bubble = new Level5.WaterBubble(100, 32, 32);
   scene.add(bubble);
 
+/*
   var bubble = new Level5.WaterBubble(100, 32, 32);
   scene.add(bubble);
   bubble.translate(new THREE.Vector3(-200, 200, 0));
+*/
 
-  var light = new Level5.Light({
-    waveLength: 430,
-    startPoint: new THREE.Vector3(-1000, 150, 0),
-    direction: new THREE.Vector3(1, -0.1, 0),
-    life: 3
-  });
-  light.shoot(scene);
+  for (var i=400; i<700; i += 100) {
+    var light = new Level5.Light({
+      waveLength: i,
+      startPoint: new THREE.Vector3(-1000, 150, 0),
+      direction: new THREE.Vector3(1, -0.1, 0),
+      life: 3
+    });
+    light.shoot(scene);
+  }
 
   camera.position.z = 1000;
 
