@@ -10,3 +10,11 @@ Level5.WaterBubble = function (radius, widthSegments, heightSegments) {
 };
 
 Level5.WaterBubble.prototype = Object.create(THREE.Mesh.prototype);
+
+// alternative to translate function of Object3D
+Level5.WaterBubble.prototype.translate = function (delta) {
+  this.geometry.vertices.forEach(function (vertex) {
+    vertex.addVectors(vertex, delta);
+  });
+  this.geometry.computeBoundingSphere();
+};
