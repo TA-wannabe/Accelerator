@@ -81,26 +81,27 @@ Level5.Light.prototype.shoot = function (scene) {
   var refractionIndex = Level5.Helper.calculateRefractionIndexWithWaveLength(intersection.object.refractionIndex,
       this.waveLength);
 
+  var collisionNormalClone = collisionNormal.clone();
   // inside to outside
   console.log(incidenceAngle * 180 / Math.PI);
   if (incidenceAngle > Math.PI / 2) {
-    collisionNormal.negate();
+    collisionNormalClone.negate();
     refractionIndex = 1.0 / refractionIndex;
   }
 
   var refractionAngle = Math.asin(Math.sin(incidenceAngle) / refractionIndex);
   var refractionDirection = new THREE.Vector3();
 
-  if (collisionNormal.clone().negate().cross(this.direction).z < 0) {
+  if (collisionNormalClone.clone().negate().cross(this.direction).z < 0) {
     refractionDirection.set(
-      Math.cos(refractionAngle) * -collisionNormal.x + Math.sin(refractionAngle) * -collisionNormal.y,
-      Math.sin(refractionAngle) * collisionNormal.x + Math.cos(refractionAngle) * -collisionNormal.y,
+      Math.cos(refractionAngle) * -collisionNormalClone.x + Math.sin(refractionAngle) * -collisionNormalClone.y,
+      Math.sin(refractionAngle) * collisionNormalClone.x + Math.cos(refractionAngle) * -collisionNormalClone.y,
       0);
   }
   else {
       refractionDirection.set(
-    Math.cos(refractionAngle) * -collisionNormal.x - Math.sin(refractionAngle) * -collisionNormal.y,
-    Math.sin(refractionAngle) * -collisionNormal.x + Math.cos(refractionAngle) * -collisionNormal.y,
+    Math.cos(refractionAngle) * -collisionNormalClone.x - Math.sin(refractionAngle) * -collisionNormalClone.y,
+    Math.sin(refractionAngle) * -collisionNormalClone.x + Math.cos(refractionAngle) * -collisionNormalClone.y,
     0);
   }
 
