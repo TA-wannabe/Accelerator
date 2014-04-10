@@ -7,6 +7,8 @@ Level5.WaterBubble = function (radius, widthSegments, heightSegments) {
     opacity: 0.5,
     side: THREE.DoubleSide
   }));
+
+  this.refractionIndex = 1.3264;
 };
 
 Level5.WaterBubble.prototype = Object.create(THREE.Mesh.prototype);

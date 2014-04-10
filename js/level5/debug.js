@@ -27,3 +27,16 @@ Level5.Debug.drawHalfLine = function (scene, startPoint, direction) {
   var line = new THREE.Line( geometry, material );
   scene.add( line );
 };
+
+Level5.Debug.drawSegment = function (scene, startPoint, endPoint) {
+  var material = new THREE.LineBasicMaterial({
+    color: 0xff0000
+  });
+
+  var geometry = new THREE.Geometry();
+  geometry.vertices.push( startPoint.clone() );
+  geometry.vertices.push( endPoint.clone() );
+
+  var line = new THREE.Line( geometry, material );
+  scene.add( line );
+};

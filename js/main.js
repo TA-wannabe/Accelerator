@@ -4,7 +4,7 @@ function onReady () {
   var height = window.innerHeight;
 
   var camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
-  var renderer = new THREE.WebGLRenderer( { alpha: true } );
+  var renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
 
   renderer.domElement.style.position = "absolute";
   renderer.domElement.style.top = "0px";
@@ -23,7 +23,8 @@ function onReady () {
   var light = new Level5.Light({
     waveLength: 430,
     startPoint: new THREE.Vector3(-1000, 150, 0),
-    direction: new THREE.Vector3(1, -0.1, 0)
+    direction: new THREE.Vector3(1, -0.1, 0),
+    life: 3
   });
   light.shoot(scene);
 
