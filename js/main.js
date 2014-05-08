@@ -3,7 +3,7 @@ function onReady () {
   var width = window.innerWidth;
   var height = window.innerHeight;
 
-  var camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
+  var camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, -1000, 1000 );
   var renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
 
   renderer.domElement.style.position = "absolute";
@@ -33,9 +33,25 @@ function onReady () {
     light.shoot(scene);
   }
 
-  camera.position.z = 1000;
+  Level5.Debug.drawHalfLine(scene, new THREE.Vector3(-10000, 0, 0), new THREE.Vector3(1, 0, 0), new THREE.Color(0xff0000));
+  Level5.Debug.drawHalfLine(scene, new THREE.Vector3(0, -10000, 0), new THREE.Vector3(0, 1, 0), new THREE.Color(0x00ff00));
+  Level5.Debug.drawHalfLine(scene, new THREE.Vector3(0, 0, -10000), new THREE.Vector3(0, 0, 1), new THREE.Color(0x0000ff)); 
 
+  camera.position.z = 100;
+  camera.lookAt(scene.position);
+
+  var angle = 0;
   function render() {
+    requestAnimationFrame(render);
+
+    // rotate camera around y-axis
+    camera.position.x = 100 * Math.cos(angle);
+    camera.position.y = 0;
+    camera.position.z = 100 * Math.sin(angle);
+    camera.lookAt(scene.position);
+
+    angle += 0.2;
+
     renderer.render(scene, camera);
   }
   render();
