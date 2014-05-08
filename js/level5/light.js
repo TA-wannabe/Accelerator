@@ -10,6 +10,12 @@ Level5.Light = function (params) {
   this.direction = params.direction;
   this.direction.normalize();
 
+  this.children = [];
+  this.parent = params.parent || null;
+  if (this.parent !== null) {
+    this.parent.children.push(this);
+  }
+
   this.life = params.life;
 };
 
@@ -66,7 +72,8 @@ Level5.Light.prototype.shoot = function (scene) {
     waveLength: this.waveLength,
     startPoint: collisionPoint2d,
     direction: reflectionVector,
-    life: this.life - 1
+    life: this.life - 1,
+    parent: this
   });
 
   reflectedLight.shoot(scene);
@@ -104,7 +111,8 @@ Level5.Light.prototype.shoot = function (scene) {
     waveLength: this.waveLength,
     startPoint: collisionPoint2d,
     direction: refractionDirection,
-    life: this.life - 1
+    life: this.life - 1,
+    parent: this
   });
 
   refractedLight.shoot(scene);
@@ -115,6 +123,7 @@ Level5.Light.prototype.clone = function () {
     waveLength: this.waveLength,
     startPoint: this.startPoint,
     direction: this.direction,
-    life: this.life
+    life: this.life,
+    parent: this.parent
   });
 };
