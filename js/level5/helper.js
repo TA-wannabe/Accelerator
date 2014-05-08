@@ -1,7 +1,19 @@
 Level5.Helper = {};
 
-Level5.Helper.convertWaveLengthToColor = function (waveLength) {
+Level5.Helper.calculateRefrectionVector = function (incidenceVector, collisionNormalVector, incidenceAngle, refractionAngle) {
+  var refractionVector = new THREE.Vector3();
 
+  var normalCoefficient = 0, incidenceCoefficient = 0;
+  var a = Math.cos(incidenceAngle);
+  var b = Math.cos(refractionAngle);
+  var c = Math.sqrt(a * a * (b * b - 1) / (a * a - 1));
+
+  normalCoefficient = c - b;
+  incidenceCoefficient = c / a;
+
+  refractionVector.addVectors(collisionNormalVector.multiplyScalar(normalCoefficient), incidenceVector.multiplyScalar(incidenceCoefficient));
+
+  return refractionVector;
 };
 
 Level5.Helper.calculateRefractionIndexWithWaveLength = function (refractionIndex, waveLength) {
@@ -52,10 +64,4 @@ Level5.Helper.waveLengthToRGBA = function (waveLength) {
   color.a = alpha;
 
   return color;
-};
-
-Level5.Helper.drawAxis = function (scene) {
-  Level5.Debug.drawHalfLine(scene, new THREE.Vector3(-10000, 0, 0), new THREE.Vector3(1, 0, 0), new THREE.Color(0xff0000));
-  Level5.Debug.drawHalfLine(scene, new THREE.Vector3(0, -10000, 0), new THREE.Vector3(0, 1, 0), new THREE.Color(0x00ff00));
-  Level5.Debug.drawHalfLine(scene, new THREE.Vector3(0, 0, -10000), new THREE.Vector3(0, 0, 1), new THREE.Color(0x0000ff));
 };

@@ -15,13 +15,13 @@ function onReady () {
 
   document.body.appendChild( renderer.domElement );
 
-  var bubble = new Level5.WaterBubble(100, 32, 32);
+  var bubble = new Level5.WaterBubble(100, 100, 100);
   scene.add(bubble);
-  bubble.translate(new THREE.Vector3(0, -50, 0));
+  bubble.translate(new THREE.Vector3(0, -50, 10));
 
-  bubble = new Level5.WaterBubble(100, 32, 32);
+  bubble = new Level5.WaterBubble(100, 100, 100);
   scene.add(bubble);
-  bubble.translate(new THREE.Vector3(-200, 200, 0));
+  bubble.translate(new THREE.Vector3(-100, 200, 0));
 
   for (var i=400; i<700; i += 10) {
     var light = new Level5.Light({

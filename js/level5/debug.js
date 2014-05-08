@@ -40,3 +40,9 @@ Level5.Debug.drawSegment = function (scene, startPoint, endPoint, color) {
   var line = new THREE.Line( geometry, material );
   scene.add( line );
 };
+
+Level5.Debug.drawAxis = function (scene) {
+  Level5.Debug.drawHalfLine(scene, new THREE.Vector3(-10000, 0, 0), new THREE.Vector3(1, 0, 0), new THREE.Color(0xff0000));
+  Level5.Debug.drawHalfLine(scene, new THREE.Vector3(0, -10000, 0), new THREE.Vector3(0, 1, 0), new THREE.Color(0x00ff00));
+  Level5.Debug.drawHalfLine(scene, new THREE.Vector3(0, 0, -10000), new THREE.Vector3(0, 0, 1), new THREE.Color(0x0000ff));
+};
