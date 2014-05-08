@@ -1,7 +1,19 @@
 Level5.Helper = {};
 
-Level5.Helper.convertWaveLengthToColor = function (waveLength) {
+Level5.Helper.calculateRefrectionVector = function (incidenceVector, collisionNormalVector, incidenceAngle, refractionAngle) {
+  var refractionVector = new THREE.Vector3();
 
+  var normalCoefficient = 0, incidenceCoefficient = 0;
+  var a = Math.cos(incidenceAngle);
+  var b = Math.cos(refractionAngle);
+  var c = Math.sqrt(a * a * (b * b - 1) / (a * a - 1));
+
+  normalCoefficient = c - b;
+  incidenceCoefficient = c / a;
+
+  refractionVector.addVectors(collisionNormalVector.multiplyScalar(normalCoefficient), incidenceVector.multiplyScalar(incidenceCoefficient));
+
+  return refractionVector;
 };
 
 Level5.Helper.calculateRefractionIndexWithWaveLength = function (refractionIndex, waveLength) {

@@ -10,6 +10,12 @@ Level5.Light = function (params) {
   this.direction = params.direction;
   this.direction.normalize();
 
+  this.children = [];
+  this.parent = params.parent || null;
+  if (this.parent !== null) {
+    this.parent.children.push(this);
+  }
+
   this.life = params.life;
 };
 
@@ -51,22 +57,21 @@ Level5.Light.prototype.shoot = function (scene) {
 
 
   // reflection
-  var collisionNormal = intersection.face.normal;
-  var collisionPoint2d = intersection.point.clone();
-  collisionPoint2d.z = 0;
+  var collisionObjectCenter = intersection.object.geometry.boundingSphere.center;
+  var collisionNormal = intersection.point.clone().sub(collisionObjectCenter).normalize();
+  var collisionPoint = intersection.point.clone();
 
   var reflectionVector = this.direction.clone();
   reflectionVector.reflect(collisionNormal);
-  // for 2d simulation
-  reflectionVector.z = 0;
   reflectionVector.normalize();
 
 
   var reflectedLight = new Level5.Light({
     waveLength: this.waveLength,
-    startPoint: collisionPoint2d,
+    startPoint: collisionPoint,
     direction: reflectionVector,
-    life: this.life - 1
+    life: this.life - 1,
+    parent: this
   });
 
   reflectedLight.shoot(scene);
@@ -80,31 +85,20 @@ Level5.Light.prototype.shoot = function (scene) {
   var collisionNormalClone = collisionNormal.clone();
   // inside to outside
   if (incidenceAngle > Math.PI / 2) {
+    incidenceAngle = Math.PI - incidenceAngle;
     collisionNormalClone.negate();
     refractionIndex = 1.0 / refractionIndex;
   }
 
   var refractionAngle = Math.asin(Math.sin(incidenceAngle) / refractionIndex);
-  var refractionDirection = new THREE.Vector3();
-
-  if (collisionNormalClone.clone().negate().cross(this.direction).z < 0) {
-    refractionDirection.set(
-      Math.cos(refractionAngle) * -collisionNormalClone.x + Math.sin(refractionAngle) * -collisionNormalClone.y,
-      Math.sin(refractionAngle) * collisionNormalClone.x + Math.cos(refractionAngle) * -collisionNormalClone.y,
-      0);
-  }
-  else {
-      refractionDirection.set(
-    Math.cos(refractionAngle) * -collisionNormalClone.x - Math.sin(refractionAngle) * -collisionNormalClone.y,
-    Math.sin(refractionAngle) * -collisionNormalClone.x + Math.cos(refractionAngle) * -collisionNormalClone.y,
-    0);
-  }
+  var refractionDirection = Level5.Helper.calculateRefrectionVector(this.direction.clone(), collisionNormalClone.clone(), incidenceAngle, refractionAngle);
 
   var refractedLight = new Level5.Light({
     waveLength: this.waveLength,
-    startPoint: collisionPoint2d,
+    startPoint: collisionPoint,
     direction: refractionDirection,
-    life: this.life - 1
+    life: this.life - 1,
+    parent: this
   });
 
   refractedLight.shoot(scene);
@@ -115,6 +109,7 @@ Level5.Light.prototype.clone = function () {
     waveLength: this.waveLength,
     startPoint: this.startPoint,
     direction: this.direction,
-    life: this.life
+    life: this.life,
+    parent: this.parent
   });
 };
