@@ -58,19 +58,16 @@ Level5.Light.prototype.shoot = function (scene) {
 
   // reflection
   var collisionNormal = intersection.face.normal;
-  var collisionPoint2d = intersection.point.clone();
-  collisionPoint2d.z = 0;
+  var collisionPoint = intersection.point.clone();
 
   var reflectionVector = this.direction.clone();
   reflectionVector.reflect(collisionNormal);
-  // for 2d simulation
-  reflectionVector.z = 0;
   reflectionVector.normalize();
 
 
   var reflectedLight = new Level5.Light({
     waveLength: this.waveLength,
-    startPoint: collisionPoint2d,
+    startPoint: collisionPoint,
     direction: reflectionVector,
     life: this.life - 1,
     parent: this
@@ -109,7 +106,7 @@ Level5.Light.prototype.shoot = function (scene) {
 
   var refractedLight = new Level5.Light({
     waveLength: this.waveLength,
-    startPoint: collisionPoint2d,
+    startPoint: collisionPoint,
     direction: refractionDirection,
     life: this.life - 1,
     parent: this

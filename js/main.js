@@ -19,7 +19,7 @@ function onReady () {
   scene.add(bubble);
   bubble.translate(new THREE.Vector3(0, -50, 0));
 
-  var bubble = new Level5.WaterBubble(100, 32, 32);
+  bubble = new Level5.WaterBubble(100, 32, 32);
   scene.add(bubble);
   bubble.translate(new THREE.Vector3(-200, 200, 0));
 
@@ -32,10 +32,6 @@ function onReady () {
     });
     light.shoot(scene);
   }
-
-  Level5.Debug.drawHalfLine(scene, new THREE.Vector3(-10000, 0, 0), new THREE.Vector3(1, 0, 0), new THREE.Color(0xff0000));
-  Level5.Debug.drawHalfLine(scene, new THREE.Vector3(0, -10000, 0), new THREE.Vector3(0, 1, 0), new THREE.Color(0x00ff00));
-  Level5.Debug.drawHalfLine(scene, new THREE.Vector3(0, 0, -10000), new THREE.Vector3(0, 0, 1), new THREE.Color(0x0000ff)); 
 
   camera.position.z = 100;
   camera.lookAt(scene.position);
@@ -50,7 +46,7 @@ function onReady () {
     camera.position.z = 100 * Math.sin(angle);
     camera.lookAt(scene.position);
 
-    angle += 0.2;
+    angle += 0.01;
 
     renderer.render(scene, camera);
   }
