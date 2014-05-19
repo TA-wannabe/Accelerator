@@ -1,57 +1,23 @@
 function onReady () {
-  var scene = new THREE.Scene();
-  var width = window.innerWidth;
-  var height = window.innerHeight;
-
-  var camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, -1000, 1000 );
-  var renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
-
-  renderer.domElement.style.position = "absolute";
-  renderer.domElement.style.top = "0px";
-  renderer.domElement.style.left = "0px";
-
-  renderer.setSize( width, height );
-  renderer.setClearColor(0x000000);
-
-  document.body.appendChild( renderer.domElement );
+  var sceneManager = new Level5.SceneManager(window);
 
   var bubble = new Level5.WaterBubble(100, 100, 100);
-  scene.add(bubble);
   bubble.translate(new THREE.Vector3(0, -50, 10));
+  sceneManager.addOpticsMaterial(bubble);
 
   bubble = new Level5.WaterBubble(100, 100, 100);
-  scene.add(bubble);
   bubble.translate(new THREE.Vector3(-100, 200, 0));
+  sceneManager.addOpticsMaterial(bubble);
 
   for (var i=400; i<700; i += 10) {
     var light = new Level5.Light({
       waveLength: i,
       startPoint: new THREE.Vector3(-1000, 0, 0),
       direction: new THREE.Vector3(1, 0, 0),
-      life: 5
+      life: 9
     });
-    light.shoot(scene);
+    sceneManager.addLight(light);
   }
 
-  camera.position.z = 100;
-  camera.lookAt(scene.position);
-
-  var angle = Math.PI / 2;
-  function render() {
-    requestAnimationFrame(render);
-
-    // rotate camera around y-axis
-    camera.position.x = 100 * Math.cos(angle);
-    camera.position.y = 0;
-    camera.position.z = 100 * Math.sin(angle);
-    camera.lookAt(scene.position);
-
-    //angle += 0.01;
-
-    renderer.render(scene, camera);
-  }
-  render();
-
-  // Input Handling
-  Level5.InputHandler.delegateInput(window, scene, camera);
+  sceneManager.startRender();
 }
