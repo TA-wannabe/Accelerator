@@ -39,6 +39,8 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
       delta.subVectors(intersects[0].point, prevIntersectPoint);
       prevIntersectPoint = intersects[0].point;
       pickedObject.translate(delta);
+
+      this.sceneManager.resetLight();
     }
 
   }).bind(this);
@@ -67,7 +69,14 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
     pickedObject = null;
   }).bind(this);
 
+  var onKeyDown = (function (e) {
+    if (e.keyCode === 82 /* r */) {
+      this.sceneManager.resetLight();
+    }
+  }).bind(this);
+
   this.sceneManager.renderer.domElement.addEventListener('mouseup', onMouseUp, false);
   this.sceneManager.renderer.domElement.addEventListener('mousedown', onMouseDown, false);
   this.sceneManager.renderer.domElement.addEventListener('mousemove', onMouseMove, false);
+  window.addEventListener('keydown', onKeyDown, false);
 };

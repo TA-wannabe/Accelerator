@@ -40,7 +40,8 @@ Level5.Light.prototype.shoot = function (scene) {
   for (var key in intersections) {
     var collisionPoint = intersections[key].point;
     //Level5.Debug.drawPoint(scene, collisionPoint);
-    if (intersections[key].face !== null) {
+    if (intersections[key].face !== null 
+      && intersections[key].object instanceof Level5.OpticalMaterial) {
       intersection = intersections[key];
       break;
     }
