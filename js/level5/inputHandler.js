@@ -1,9 +1,11 @@
-Level5.InputHandler = {};
+Level5.InputHandler = function (sceneManager) {
+  this.sceneManager = sceneManager;
+};
 
-Level5.InputHandler.delegateInput = function (window, scene, camera) {
+Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
   var mouseVector = new THREE.Vector3();
   var projector = new THREE.Projector();
-  var objects = scene.children;
+  var objects = this.sceneManager.getOpticalMaterials();
   var width = window.innerWidth;
   var height = window.innerHeight;
 
@@ -15,9 +17,12 @@ Level5.InputHandler.delegateInput = function (window, scene, camera) {
     mouseVector.x = 2 * (e.clientX / width) - 1;
     mouseVector.y = 1 - 2 * (e.clientY / height);
     var raycaster = projector.pickingRay(mouseVector.clone(), camera);
-    var intersects = raycaster.intersectObjects(objects);
-    for (var i in intersects) {
-      intersects[i].object.material.color.setRGB(1.0, 0, 0);
+    var intersects = raycaster.intersectObjects(objects, false);
+    
+    if (intersects.length > 0) {
+      var pickedObject = intersects.shift().object;
+      pickedObject.material.color.setRGB(1.0, 0, 0);
+      console.log(pickedObject.acquiredLights);
     }
   };
 

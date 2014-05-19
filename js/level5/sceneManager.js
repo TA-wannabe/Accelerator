@@ -19,16 +19,21 @@ Level5.SceneManager = function (window) {
   document.body.appendChild(this.renderer.domElement);
 
   // Optics
-  this.opticsMaterials = [];
+  this.opticalMaterials = [];
   this.lights = [];
 
   // Input Handler
-  Level5.InputHandler.delegateInput(window, this.scene, this.camera);
+  this.inputHandler = new Level5.InputHandler(this);
+  this.inputHandler.delegateInput(window, this.scene, this.camera);
 };
 
-Level5.SceneManager.prototype.addOpticsMaterial = function (material) {
-  this.opticsMaterials.push(material);
+Level5.SceneManager.prototype.addOpticalMaterial = function (material) {
+  this.opticalMaterials.push(material);
   this.scene.add(material);
+};
+
+Level5.SceneManager.prototype.getOpticalMaterials = function () {
+  return this.opticalMaterials;
 };
 
 Level5.SceneManager.prototype.addLight = function (light) {

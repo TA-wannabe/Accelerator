@@ -1,5 +1,3 @@
-var limit = 6;
-
 Level5.Light = function (params) {
   // if Light is instance of THREE.Line,
   // then we need calculate refraction etc. 
@@ -17,16 +15,13 @@ Level5.Light = function (params) {
   }
 
   this.life = params.life;
+
+  // medium is nullable OpticalMaterial object, null -> vaccum.
+  // medium will be changed only refraction occurred.
+  this.medium = params.medium || null;
 };
 
 Level5.Light.prototype.shoot = function (scene) {
-
-/*
-  limit = limit - 1;
-  if (limit < 0) {
-    return;
-  }
-*/
 
   if (this.life <= 0) {
     return;
@@ -56,7 +51,8 @@ Level5.Light.prototype.shoot = function (scene) {
   Level5.Debug.drawSegment(scene, this.startPoint, intersection.point, Level5.Helper.waveLengthToRGBA(this.waveLength));
 
   // reflection
-  var collisionObjectCenter = intersection.object.getBoundingSphereCenter();
+  var collidedObject = intersection.object;
+  var collisionObjectCenter = collidedObject.getBoundingSphereCenter();
   var collisionNormal = intersection.point.clone().sub(collisionObjectCenter).normalize();
   var collisionPoint = intersection.point.clone();
 
@@ -64,19 +60,33 @@ Level5.Light.prototype.shoot = function (scene) {
   reflectionVector.reflect(collisionNormal);
   reflectionVector.normalize();
 
-
   var reflectedLight = new Level5.Light({
     waveLength: this.waveLength,
     startPoint: collisionPoint,
     direction: reflectionVector,
     life: this.life - 1,
-    parent: this
+    parent: this,
+    medium: this.medium
   });
 
   reflectedLight.shoot(scene);
 
   // refraction
   // direction of light? inside to outside, or not.
+
+  // change a medium for light.
+  // enter a new medium.
+  if (this.medium !== collidedObject) {
+    console.log('in');
+    this.medium = collidedObject;
+    this.medium.acquireLight(this);
+  }
+  // go out from a medium.
+  else {
+    console.log('out');
+    this.medium = null;
+  }
+
   var incidenceAngle = collisionNormal.clone().negate().angleTo(this.direction);
   var refractionIndex = Level5.Helper.calculateRefractionIndexWithWaveLength(intersection.object.refractionIndex,
       this.waveLength);
@@ -88,10 +98,6 @@ Level5.Light.prototype.shoot = function (scene) {
     collisionNormalClone.negate();
     refractionIndex = 1.0 / refractionIndex;
   }
-  else {
-    // inside, outside determination need to separate.
-    intersection.object.acquireLight(this);
-  }
 
   var refractionAngle = Math.asin(Math.sin(incidenceAngle) / refractionIndex);
   var refractionDirection = Level5.Helper.calculateRefrectionVector(this.direction.clone(), collisionNormalClone.clone(), incidenceAngle, refractionAngle);
@@ -101,7 +107,8 @@ Level5.Light.prototype.shoot = function (scene) {
     startPoint: collisionPoint,
     direction: refractionDirection,
     life: this.life - 1,
-    parent: this
+    parent: this,
+    medium: this.medium
   });
 
   refractedLight.shoot(scene);
@@ -113,6 +120,7 @@ Level5.Light.prototype.clone = function () {
     startPoint: this.startPoint,
     direction: this.direction,
     life: this.life,
-    parent: this.parent
+    parent: this.parent,
+    medium: this.medium
   });
 };
