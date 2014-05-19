@@ -77,13 +77,11 @@ Level5.Light.prototype.shoot = function (scene) {
   // change a medium for light.
   // enter a new medium.
   if (this.medium !== collidedObject) {
-    console.log('in');
     this.medium = collidedObject;
     this.medium.acquireLight(this);
   }
   // go out from a medium.
   else {
-    console.log('out');
     this.medium = null;
   }
 

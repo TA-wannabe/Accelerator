@@ -3,7 +3,8 @@ Level5.SceneManager = function (window) {
   var width = this.width = window.innerWidth;
   var height = this.height = window.innerHeight;
 
-  this.camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, -1000, 1000 );
+  //this.camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, -1000, 1000 );
+  this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
   this.camera.position.z = 100;
   this.camera.lookAt(this.scene.position);
 
@@ -25,6 +26,16 @@ Level5.SceneManager = function (window) {
   // Input Handler
   this.inputHandler = new Level5.InputHandler(this);
   this.inputHandler.delegateInput(window, this.scene, this.camera);
+
+  // Trackball Controller
+  this.trackballControls = new THREE.TrackballControls(this.camera);
+  this.trackballControls.rotateSpeed = 1.0;
+  this.trackballControls.zoomSpeed = 1.2;
+  this.trackballControls.panSpeed = 0.8;
+  this.trackballControls.noZoom = false;
+  this.trackballControls.noPan = false;
+  this.trackballControls.staticMoving = true;
+  this.trackballControls.dynamicDampingFactor = 0.3;
 };
 
 Level5.SceneManager.prototype.addOpticalMaterial = function (material) {
@@ -41,16 +52,15 @@ Level5.SceneManager.prototype.addLight = function (light) {
   light.shoot(this.scene);
 };
 
+Level5.SceneManager.prototype.toggleTrackballControl = function () {
+  this.trackballControls.enabled = !this.trackballControls.enabled;
+};
+
 Level5.SceneManager.prototype.startRender = function () {
   var angle = Math.PI / 2;
   var render = (function () {
     requestAnimationFrame(render);
-    this.camera.position.x = 100 * Math.cos(angle);
-    this.camera.position.y = 0;
-    this.camera.position.z = 100 * Math.sin(angle);
-    this.camera.lookAt(this.scene.position);
-
-    //angle += 0.01;
+    this.trackballControls.update();
     this.renderer.render(this.scene, this.camera);
   }).bind(this);
   render();
