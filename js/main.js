@@ -28,7 +28,7 @@ function onReady () {
       waveLength: i,
       startPoint: new THREE.Vector3(-1000, 0, 0),
       direction: new THREE.Vector3(1, 0, 0),
-      life: 9
+      life: 2
     });
     light.shoot(scene);
   }

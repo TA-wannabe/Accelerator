@@ -55,9 +55,8 @@ Level5.Light.prototype.shoot = function (scene) {
 
   Level5.Debug.drawSegment(scene, this.startPoint, intersection.point, Level5.Helper.waveLengthToRGBA(this.waveLength));
 
-
   // reflection
-  var collisionObjectCenter = intersection.object.geometry.boundingSphere.center;
+  var collisionObjectCenter = intersection.object.getBoundingSphereCenter();
   var collisionNormal = intersection.point.clone().sub(collisionObjectCenter).normalize();
   var collisionPoint = intersection.point.clone();
 
@@ -88,6 +87,10 @@ Level5.Light.prototype.shoot = function (scene) {
     incidenceAngle = Math.PI - incidenceAngle;
     collisionNormalClone.negate();
     refractionIndex = 1.0 / refractionIndex;
+  }
+  else {
+    // inside, outside determination need to separate.
+    intersection.object.acquireLight(this);
   }
 
   var refractionAngle = Math.asin(Math.sin(incidenceAngle) / refractionIndex);

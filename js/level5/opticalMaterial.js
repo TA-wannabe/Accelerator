@@ -2,6 +2,8 @@ Level5.OpticalMaterial = function (geometry, material) {
   THREE.Mesh.call(this, geometry, material);
 
   // optics property
+  // Lights in this material.
+  this.acquiredLights = [];
   this.refractionIndex = 1.0;
 };
 
@@ -18,4 +20,12 @@ Level5.OpticalMaterial.prototype.translate = function (delta) {
 // Optics function
 Level5.OpticalMaterial.prototype.setRefractionIndex = function (index) {
   this.refractionIndex = index;
+};
+
+Level5.OpticalMaterial.prototype.getBoundingSphereCenter = function () {
+  return this.geometry.boundingSphere.center;
+};
+
+Level5.OpticalMaterial.prototype.acquireLight = function (light) {
+  this.acquiredLights.push(light);
 };
