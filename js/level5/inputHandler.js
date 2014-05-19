@@ -55,8 +55,8 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
       pickedObject = intersect.object;
       pickedObject.material.color.setRGB(1.0, 0, 0);
 
-      prevIntersectPoint.copy(intersect.point);
-      plane.position.copy(pickedObject.position);
+      prevIntersectPoint.copy(pickedObject.getBoundingSphereCenter());
+      plane.position.copy(pickedObject.getBoundingSphereCenter());
       plane.lookAt(camera.position);
     }
   }).bind(this);
