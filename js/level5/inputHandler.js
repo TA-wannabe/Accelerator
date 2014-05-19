@@ -8,6 +8,7 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
   var objects = this.sceneManager.getOpticalMaterials();
   var width = window.innerWidth;
   var height = window.innerHeight;
+  var savedColor = new THREE.Color();
 
   // for moving object
   var plane = new THREE.Mesh(
@@ -39,8 +40,6 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
       delta.subVectors(intersects[0].point, prevIntersectPoint);
       prevIntersectPoint = intersects[0].point;
       pickedObject.translate(delta);
-
-      this.sceneManager.resetLight();
     }
 
   }).bind(this);
@@ -55,6 +54,7 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
       this.sceneManager.setTrackballControlEnabled(false);
       var intersect = intersects.shift();
       pickedObject = intersect.object;
+      savedColor.copy(pickedObject.material.color);
       pickedObject.material.color.setRGB(1.0, 0, 0);
 
       prevIntersectPoint.copy(pickedObject.getBoundingSphereCenter());
@@ -66,7 +66,13 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
   var onMouseUp = (function (e) {
     e.preventDefault();
     this.sceneManager.setTrackballControlEnabled(true);
+
+    if (pickedObject !== null) {
+      pickedObject.material.color.copy(savedColor);
+    }
     pickedObject = null;
+
+    this.sceneManager.resetLight();
   }).bind(this);
 
   var onKeyDown = (function (e) {
