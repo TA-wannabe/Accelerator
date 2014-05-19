@@ -14,6 +14,15 @@ Level5.OpticalMaterial.prototype.translate = function (delta) {
   this.geometry.vertices.forEach(function (vertex) {
     vertex.addVectors(vertex, delta);
   });
+
+  this.geometry.verticesNeedUpdate = true;
+  this.geometry.elementsNeedUpdate = true;
+  this.geometry.morphTargetsNeedUpdate = true;
+  this.geometry.uvsNeedUpdate = true;
+  this.geometry.normalsNeedUpdate = true;
+  this.geometry.colorsNeedUpdate = true;
+  this.geometry.tangentsNeedUpdate = true;
+  
   this.geometry.computeBoundingSphere();
 };
 

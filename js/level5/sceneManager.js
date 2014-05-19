@@ -52,8 +52,8 @@ Level5.SceneManager.prototype.addLight = function (light) {
   light.shoot(this.scene);
 };
 
-Level5.SceneManager.prototype.toggleTrackballControl = function () {
-  this.trackballControls.enabled = !this.trackballControls.enabled;
+Level5.SceneManager.prototype.setTrackballControlEnabled = function (enabled) {
+  this.trackballControls.enabled = enabled;
 };
 
 Level5.SceneManager.prototype.startRender = function () {

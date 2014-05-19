@@ -9,29 +9,62 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
   var width = window.innerWidth;
   var height = window.innerHeight;
 
+  // for moving object
+  var plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(2000, 2000, 8, 8),
+    new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      opacity: 0.25,
+      transparent: true,
+      wireframe: true
+    }));
+  plane.visible = false;
+  this.sceneManager.scene.add(plane);
+
+  var prevIntersectPoint = new THREE.Vector3();
+
+
+  var pickedObject = null;
+
   var onMouseMove = (function (e) {
     e.preventDefault();
+
+    mouseVector.x = 2 * (e.clientX / width) - 1;
+    mouseVector.y = 1 - 2 * (e.clientY / height);
+
+    if (pickedObject !== null) {
+      var raycaster = projector.pickingRay(mouseVector.clone(), camera);
+      var intersects = raycaster.intersectObject(plane, false);
+      var delta = new THREE.Vector3();
+      delta.subVectors(intersects[0].point, prevIntersectPoint);
+      prevIntersectPoint = intersects[0].point;
+      pickedObject.translate(delta);
+    }
+
   }).bind(this);
 
   var onMouseDown = (function (e) {
     e.preventDefault();
 
-    mouseVector.x = 2 * (e.clientX / width) - 1;
-    mouseVector.y = 1 - 2 * (e.clientY / height);
     var raycaster = projector.pickingRay(mouseVector.clone(), camera);
     var intersects = raycaster.intersectObjects(objects, false);
     
     if (intersects.length > 0) {
-      this.sceneManager.toggleTrackballControl();
-      var pickedObject = intersects.shift().object;
+      this.sceneManager.setTrackballControlEnabled(false);
+      var intersect = intersects.shift();
+      pickedObject = intersect.object;
       pickedObject.material.color.setRGB(1.0, 0, 0);
-      console.log(pickedObject.acquiredLights);
+
+      prevIntersectPoint.copy(intersect.point);
+      plane.position.copy(pickedObject.position);
+      plane.lookAt(camera.position);
     }
   }).bind(this);
 
   var onMouseUp = (function (e) {
     e.preventDefault();
-    this.sceneManager.toggleTrackballControl();
+    this.sceneManager.setTrackballControlEnabled(true);
+    pickedObject = null;
   }).bind(this);
 
   this.sceneManager.renderer.domElement.addEventListener('mouseup', onMouseUp, false);
