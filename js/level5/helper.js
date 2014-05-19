@@ -65,3 +65,28 @@ Level5.Helper.waveLengthToRGBA = function (waveLength) {
 
   return color;
 };
+
+Level5.Helper.getHalfLineMesh = function (startPoint, direction, color) {
+  var material = new THREE.LineBasicMaterial({
+    color: color,
+  });
+
+  var geometry = new THREE.Geometry();
+  geometry.vertices.push( startPoint.clone() );
+  var endPoint = new THREE.Vector3();
+  geometry.vertices.push( endPoint.addVectors(startPoint, direction.clone().multiplyScalar(1000000)) );
+
+  return new THREE.Line( geometry, material );
+};
+
+Level5.Helper.getSegmentMesh = function (startPoint, endPoint, color) {
+  var material = new THREE.LineBasicMaterial({
+    color: color,
+  });
+
+  var geometry = new THREE.Geometry();
+  geometry.vertices.push( startPoint.clone() );
+  geometry.vertices.push( endPoint.clone() );
+
+  return new THREE.Line( geometry, material );
+};

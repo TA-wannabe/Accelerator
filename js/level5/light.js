@@ -19,6 +19,9 @@ Level5.Light = function (params) {
   // medium is nullable OpticalMaterial object, null -> vaccum.
   // medium will be changed only refraction occurred.
   this.medium = params.medium || null;
+
+  // drawable
+  this.mesh = null;
 };
 
 Level5.Light.prototype.shoot = function (scene) {
@@ -44,11 +47,13 @@ Level5.Light.prototype.shoot = function (scene) {
   }
 
   if (intersection === null) {
-    Level5.Debug.drawHalfLine(scene, this.startPoint, this.direction, Level5.Helper.waveLengthToRGBA(this.waveLength));
+    this.mesh = Level5.Helper.getHalfLineMesh(this.startPoint, this.direction, Level5.Helper.waveLengthToRGBA(this.waveLength));
+    scene.add(this.mesh);
     return;
   }
 
-  Level5.Debug.drawSegment(scene, this.startPoint, intersection.point, Level5.Helper.waveLengthToRGBA(this.waveLength));
+  this.mesh = Level5.Helper.getSegmentMesh(this.startPoint, intersection.point, Level5.Helper.waveLengthToRGBA(this.waveLength));
+  scene.add(this.mesh);
 
   // reflection
   var collidedObject = intersection.object;

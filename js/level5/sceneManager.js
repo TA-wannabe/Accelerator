@@ -65,3 +65,18 @@ Level5.SceneManager.prototype.startRender = function () {
   }).bind(this);
   render();
 };
+
+Level5.SceneManager.prototype.resetLight = function () {
+  var iterateChildren = (function (light) {
+    for (var i in light.children) {
+      iterateChildren(light.children[i]);
+    }
+    this.scene.remove(light.mesh);
+  }).bind(this);
+  for (var i in this.lights) {
+    iterateChildren(this.lights[i]);
+  }
+  for (var i in this.lights) {
+    this.lights[i].shoot(this.scene);
+  }
+};
