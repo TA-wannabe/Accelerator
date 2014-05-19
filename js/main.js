@@ -28,7 +28,7 @@ function onReady () {
       waveLength: i,
       startPoint: new THREE.Vector3(-1000, 0, 0),
       direction: new THREE.Vector3(1, 0, 0),
-      life: 2
+      life: 5
     });
     light.shoot(scene);
   }
@@ -36,7 +36,7 @@ function onReady () {
   camera.position.z = 100;
   camera.lookAt(scene.position);
 
-  var angle = 0;
+  var angle = Math.PI / 2;
   function render() {
     requestAnimationFrame(render);
 
@@ -46,9 +46,12 @@ function onReady () {
     camera.position.z = 100 * Math.sin(angle);
     camera.lookAt(scene.position);
 
-    angle += 0.01;
+    //angle += 0.01;
 
     renderer.render(scene, camera);
   }
   render();
+
+  // Input Handling
+  Level5.InputHandler.delegateInput(window, scene, camera);
 }
