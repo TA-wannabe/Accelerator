@@ -9,11 +9,11 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
   var width = window.innerWidth;
   var height = window.innerHeight;
 
-  var onMouseMove = function (e) {
+  var onMouseMove = (function (e) {
     e.preventDefault();
-  };
+  }).bind(this);
 
-  var onMouseDown = function (e) {
+  var onMouseDown = (function (e) {
     e.preventDefault();
 
     mouseVector.x = 2 * (e.clientX / width) - 1;
@@ -27,16 +27,14 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
       pickedObject.material.color.setRGB(1.0, 0, 0);
       console.log(pickedObject.acquiredLights);
     }
-  };
+  }).bind(this);
 
-  var onMouseUp = function (e) {
+  var onMouseUp = (function (e) {
     e.preventDefault();
     this.sceneManager.toggleTrackballControl();
-  };
+  }).bind(this);
 
-  (function (window) {
-    window.addEventListener('mouseup', onMouseUp, false);
-    window.addEventListener('mousedown', onMouseDown, false);
-    window.addEventListener('mousemove', onMouseMove, false);
-  })(window);
+  this.sceneManager.renderer.domElement.addEventListener('mouseup', onMouseUp, false);
+  this.sceneManager.renderer.domElement.addEventListener('mousedown', onMouseDown, false);
+  this.sceneManager.renderer.domElement.addEventListener('mousemove', onMouseMove, false);
 };

@@ -23,10 +23,6 @@ Level5.SceneManager = function (window) {
   this.opticalMaterials = [];
   this.lights = [];
 
-  // Input Handler
-  this.inputHandler = new Level5.InputHandler(this);
-  this.inputHandler.delegateInput(window, this.scene, this.camera);
-
   // Trackball Controller
   this.trackballControls = new THREE.TrackballControls(this.camera);
   this.trackballControls.rotateSpeed = 1.0;
@@ -36,6 +32,10 @@ Level5.SceneManager = function (window) {
   this.trackballControls.noPan = false;
   this.trackballControls.staticMoving = true;
   this.trackballControls.dynamicDampingFactor = 0.3;
+
+  // Input Handler
+  this.inputHandler = new Level5.InputHandler(this);
+  this.inputHandler.delegateInput(window, this.scene, this.camera);
 };
 
 Level5.SceneManager.prototype.addOpticalMaterial = function (material) {
