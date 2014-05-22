@@ -1,5 +1,3 @@
-var limit = 6;
-
 Level5.Light = function (params) {
   // if Light is instance of THREE.Line,
   // then we need calculate refraction etc. 
@@ -17,16 +15,16 @@ Level5.Light = function (params) {
   }
 
   this.life = params.life;
+
+  // medium is nullable OpticalMaterial object, null -> vaccum.
+  // medium will be changed only refraction occurred.
+  this.medium = params.medium || null;
+
+  // drawable
+  this.mesh = null;
 };
 
 Level5.Light.prototype.shoot = function (scene) {
-
-/*
-  limit = limit - 1;
-  if (limit < 0) {
-    return;
-  }
-*/
 
   if (this.life <= 0) {
     return;
@@ -42,22 +40,25 @@ Level5.Light.prototype.shoot = function (scene) {
   for (var key in intersections) {
     var collisionPoint = intersections[key].point;
     //Level5.Debug.drawPoint(scene, collisionPoint);
-    if (intersections[key].face !== null) {
+    if (intersections[key].face !== null 
+      && intersections[key].object instanceof Level5.OpticalMaterial) {
       intersection = intersections[key];
       break;
     }
   }
 
   if (intersection === null) {
-    Level5.Debug.drawHalfLine(scene, this.startPoint, this.direction, Level5.Helper.waveLengthToRGBA(this.waveLength));
+    this.mesh = Level5.Helper.getHalfLineMesh(this.startPoint, this.direction, Level5.Helper.waveLengthToRGBA(this.waveLength));
+    scene.add(this.mesh);
     return;
   }
 
-  Level5.Debug.drawSegment(scene, this.startPoint, intersection.point, Level5.Helper.waveLengthToRGBA(this.waveLength));
-
+  this.mesh = Level5.Helper.getSegmentMesh(this.startPoint, intersection.point, Level5.Helper.waveLengthToRGBA(this.waveLength));
+  scene.add(this.mesh);
 
   // reflection
-  var collisionObjectCenter = intersection.object.geometry.boundingSphere.center;
+  var collidedObject = intersection.object;
+  var collisionObjectCenter = collidedObject.getBoundingSphereCenter();
   var collisionNormal = intersection.point.clone().sub(collisionObjectCenter).normalize();
   var collisionPoint = intersection.point.clone();
 
@@ -65,19 +66,31 @@ Level5.Light.prototype.shoot = function (scene) {
   reflectionVector.reflect(collisionNormal);
   reflectionVector.normalize();
 
-
   var reflectedLight = new Level5.Light({
     waveLength: this.waveLength,
     startPoint: collisionPoint,
     direction: reflectionVector,
     life: this.life - 1,
-    parent: this
+    parent: this,
+    medium: this.medium
   });
 
   reflectedLight.shoot(scene);
 
   // refraction
   // direction of light? inside to outside, or not.
+
+  // change a medium for light.
+  // enter a new medium.
+  if (this.medium !== collidedObject) {
+    this.medium = collidedObject;
+    this.medium.acquireLight(this);
+  }
+  // go out from a medium.
+  else {
+    this.medium = null;
+  }
+
   var incidenceAngle = collisionNormal.clone().negate().angleTo(this.direction);
   var refractionIndex = Level5.Helper.calculateRefractionIndexWithWaveLength(intersection.object.refractionIndex,
       this.waveLength);
@@ -98,7 +111,8 @@ Level5.Light.prototype.shoot = function (scene) {
     startPoint: collisionPoint,
     direction: refractionDirection,
     life: this.life - 1,
-    parent: this
+    parent: this,
+    medium: this.medium
   });
 
   refractedLight.shoot(scene);
@@ -110,6 +124,7 @@ Level5.Light.prototype.clone = function () {
     startPoint: this.startPoint,
     direction: this.direction,
     life: this.life,
-    parent: this.parent
+    parent: this.parent,
+    medium: this.medium
   });
 };
