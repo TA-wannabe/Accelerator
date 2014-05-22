@@ -1,23 +1,24 @@
 function onReady () {
   var sceneManager = new Level5.SceneManager(window);
 
-  var bubble = new Level5.WaterBubble(100, 100, 100);
-  bubble.translate(new THREE.Vector3(0, -50, 10));
-  sceneManager.addOpticalMaterial(bubble);
+  var manager = new THREE.LoadingManager();
+  manager.onProgress = function (item, loaded, total) {
+    console.log(item, loaded, total);
+  };
 
-  bubble = new Level5.WaterBubble(100, 100, 100);
-  bubble.translate(new THREE.Vector3(-100, 200, 0));
-  sceneManager.addOpticalMaterial(bubble);
-/*
-  for (var i=400; i<700; i+=30) {
-    var light = new Level5.Light({
-      waveLength: i,
-      startPoint: new THREE.Vector3(-1000, 0, 0),
-      direction: new THREE.Vector3(1, 0, 0),
-      life: 9
+  var loader = new THREE.OBJLoader(manager);
+  loader.load('obj/diamond.obj', function (obj) {
+    obj.traverse(function (child) {
+      if (child instanceof Level5.OpticalMaterial) {
+        child.material.color.setHex(0x0080ff);
+        child.material.opacity = 0.3;
+        child.material.transparent = true;
+        child.material.side = THREE.DoubleSide;
+        child.setRefractionIndex(2.3);
+      }
     });
-    sceneManager.addLight(light);
-  }
-*/
+    sceneManager.scene.add(obj);
+  });
+
   sceneManager.startRender();
 }
