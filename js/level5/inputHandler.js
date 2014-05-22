@@ -1,7 +1,8 @@
 Level5.InputState = {
   Normal: 0,
   AddBubbleMode: 1,
-  AddLightMode: 2
+  AddLightMode: 2,
+  AddDiamondMode: 3
 };
 
 Level5.InputHandler = function (sceneManager) {
@@ -70,17 +71,25 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
   var onMouseDown = (function (e) {
     e.preventDefault();
 
-    // object adding mode
+    // bubble adding mode
     var state = this.state.get();
     if (state === Level5.InputState.AddBubbleMode) {
       this.sceneManager.setTrackballControlEnabled(false);
 
-      var unprojectedVector = projector.unprojectVector(mouseVector.clone(), camera);
-
       var radius = 70 + Math.random() * 60;
       var bubble = new Level5.WaterBubble(radius, 100, 100);
-      bubble.translate(unprojectedVector);
+      bubble.translate(projector.unprojectVector(mouseVector.clone(), camera));
       this.sceneManager.addOpticalMaterial(bubble);
+    }
+    else if (state === Level5.InputState.AddDiamondMode) {
+      this.sceneManager.setTrackballControlEnabled(false);
+      var obj = new Level5.OpticalObjLoader({
+        objFileName: 'obj/diamond.obj',
+        refractionIndex: 2.3
+      },(function (opticalMaterial) {
+        opticalMaterial.translate(projector.unprojectVector(mouseVector.clone(), camera));
+        this.sceneManager.addOpticalMaterial(opticalMaterial);
+      }).bind(this));
     }
     // light adding mode
     else if (state === Level5.InputState.AddLightMode) {
@@ -135,8 +144,11 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
       case 65: /* a */
         this.state.set(Level5.InputState.AddBubbleMode);
         break;
-      case 76:
+      case 76: /* l */
         this.state.set(Level5.InputState.AddLightMode);
+        break;
+      case 68: /* d */
+        this.state.set(Level5.InputState.AddDiamondMode);
         break;
     }
   }).bind(this);
