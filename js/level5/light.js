@@ -71,8 +71,7 @@ Level5.Light.prototype.shoot = function (scene) {
 
   // reflection
   var collidedObject = intersection.object;
-  var collisionObjectCenter = collidedObject.getBoundingSphereCenter();
-  var collisionNormal = intersection.point.clone().sub(collisionObjectCenter).normalize();
+  var collisionNormal = intersection.face.normal;
   var collisionPoint = intersection.point.clone();
 
   var reflectionVector = this.direction.clone();
