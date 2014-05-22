@@ -1,5 +1,27 @@
+Level5.InputState = {
+  Normal: 0,
+  AddBubbleMode: 1,
+  AddLightMode: 2
+};
+
 Level5.InputHandler = function (sceneManager) {
   this.sceneManager = sceneManager;
+  this.state = {
+    state: Level5.InputState.Normal,
+    set: function (state) {
+      console.log(this.state, state);
+      if (state === this.state) {
+        this.state = Level5.InputState.Normal;
+      }
+      else {
+        this.state = state;
+      }
+      console.log('Mode set : ', this.state);
+    },
+    get: function () {
+      return this.state;
+    }
+  };
 };
 
 Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
@@ -9,7 +31,7 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
   var width = window.innerWidth;
   var height = window.innerHeight;
   var savedColor = new THREE.Color();
-  var addMode = false;
+  var addBubbleMode = false;
 
   // for moving object
   var plane = new THREE.Mesh(
@@ -49,7 +71,10 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
     e.preventDefault();
 
     // object adding mode
-    if (addMode) {
+    var state = this.state.get();
+    if (state === Level5.InputState.AddBubbleMode) {
+      this.sceneManager.setTrackballControlEnabled(false);
+
       var unprojectedVector = projector.unprojectVector(mouseVector.clone(), camera);
 
       var radius = 70 + Math.random() * 60;
@@ -57,8 +82,22 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
       bubble.translate(unprojectedVector);
       this.sceneManager.addOpticalMaterial(bubble);
     }
+    // light adding mode
+    else if (state === Level5.InputState.AddLightMode) {
+      this.sceneManager.setTrackballControlEnabled(false);
+
+      var cameraLookAt = new THREE.Vector3(0, 0, -1);
+      cameraLookAt.applyQuaternion(camera.quaternion);
+      var whiteRay = Level5.Light.createWhiteRay(
+        projector.unprojectVector(mouseVector.clone(), camera),
+        cameraLookAt
+      );
+      whiteRay.forEach((function (ray) {
+        this.sceneManager.addLight(ray);
+      }).bind(this));
+    }
     // object picking mode
-    else {
+    else if (state === Level5.InputState.Normal) {
       var raycaster = projector.pickingRay(mouseVector.clone(), camera);
       var intersects = raycaster.intersectObjects(objects, false);
       
@@ -94,8 +133,10 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
         this.sceneManager.resetLight();
         break;
       case 65: /* a */
-        addMode = !addMode;
-        console.log('add mode toggled : ', addMode);
+        this.state.set(Level5.InputState.AddBubbleMode);
+        break;
+      case 76:
+        this.state.set(Level5.InputState.AddLightMode);
         break;
     }
   }).bind(this);

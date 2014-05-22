@@ -24,6 +24,19 @@ Level5.Light = function (params) {
   this.mesh = null;
 };
 
+Level5.Light.createWhiteRay = function (startPoint, direction) {
+  var whiteRay = [];
+  for (var i=400; i<700; i+=30) {
+    whiteRay.push(new Level5.Light({
+      waveLength: i,
+      startPoint: startPoint,
+      direction: direction,
+      life: 9
+    }));
+  }
+  return whiteRay;
+};
+
 Level5.Light.prototype.shoot = function (scene) {
 
   if (this.life <= 0) {
