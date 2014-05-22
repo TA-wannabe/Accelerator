@@ -2,20 +2,27 @@
 <html>
 	<head>
 		<title>Accelerator - Level 5</title>
-    <style>canvas { width: 100%; height: 100% }</style>
+    <style>
+      canvas { width: 100%; height: 100% }
+      #renderDialog { position: absolute; color: white; top: 20px; left: 20px; z-index: 1; visibility: hidden; }
+    </style>
     <script src="js/three.min.js"></script>
-    <!-- three.js extra -->
-    <script src="js/TrackballControls.js"></script>
     <script src="js/level5/level5.js"></script>
+    <script src="js/level5/config.js"></script>
     <script src="js/level5/debug.js"></script>
     <script src="js/level5/helper.js"></script>
     <script src="js/level5/opticalMaterial.js"></script>
+    <script src="js/level5/opticalObjLoader.js"></script>
     <script src="js/level5/waterBubble.js"></script>
     <script src="js/level5/light.js"></script>
     <script src="js/level5/sceneManager.js"></script>
     <script src="js/level5/inputHandler.js"></script>
+    <!-- three.js extra -->
+    <script src="js/TrackballControls.js"></script>
+    <script src="js/OBJLoader.js"></script>
     <script src="js/main.js"></script>
 	</head>
 	<body onload='onReady()'>
+    <div id="renderDialog">Now Rendering...</div>
 	</body>
 </html>
