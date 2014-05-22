@@ -9,6 +9,7 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
   var width = window.innerWidth;
   var height = window.innerHeight;
   var savedColor = new THREE.Color();
+  var addMode = false;
 
   // for moving object
   var plane = new THREE.Mesh(
@@ -47,19 +48,31 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
   var onMouseDown = (function (e) {
     e.preventDefault();
 
-    var raycaster = projector.pickingRay(mouseVector.clone(), camera);
-    var intersects = raycaster.intersectObjects(objects, false);
-    
-    if (intersects.length > 0) {
-      this.sceneManager.setTrackballControlEnabled(false);
-      var intersect = intersects.shift();
-      pickedObject = intersect.object;
-      savedColor.copy(pickedObject.material.color);
-      pickedObject.material.color.setRGB(1.0, 0, 0);
+    // object adding mode
+    if (addMode) {
+      var unprojectedVector = projector.unprojectVector(mouseVector.clone(), camera);
 
-      prevIntersectPoint.copy(pickedObject.getBoundingSphereCenter());
-      plane.position.copy(pickedObject.getBoundingSphereCenter());
-      plane.lookAt(camera.position);
+      var radius = 70 + Math.random() * 60;
+      var bubble = new Level5.WaterBubble(radius, 100, 100);
+      bubble.translate(unprojectedVector);
+      this.sceneManager.addOpticalMaterial(bubble);
+    }
+    // object picking mode
+    else {
+      var raycaster = projector.pickingRay(mouseVector.clone(), camera);
+      var intersects = raycaster.intersectObjects(objects, false);
+      
+      if (intersects.length > 0) {
+        this.sceneManager.setTrackballControlEnabled(false);
+        var intersect = intersects.shift();
+        pickedObject = intersect.object;
+        savedColor.copy(pickedObject.material.color);
+        pickedObject.material.color.setRGB(1.0, 0, 0);
+
+        prevIntersectPoint.copy(pickedObject.getBoundingSphereCenter());
+        plane.position.copy(pickedObject.getBoundingSphereCenter());
+        plane.lookAt(camera.position);
+      }
     }
   }).bind(this);
 
@@ -72,12 +85,18 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
     }
     pickedObject = null;
 
-    this.sceneManager.resetLight();
+    //this.sceneManager.resetLight();
   }).bind(this);
 
   var onKeyDown = (function (e) {
-    if (e.keyCode === 82 /* r */) {
-      this.sceneManager.resetLight();
+    switch (e.keyCode) {
+      case 82: /* r */
+        this.sceneManager.resetLight();
+        break;
+      case 65: /* a */
+        addMode = !addMode;
+        console.log('add mode toggled : ', addMode);
+        break;
     }
   }).bind(this);
 
