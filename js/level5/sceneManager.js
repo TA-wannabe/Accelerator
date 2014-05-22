@@ -67,6 +67,9 @@ Level5.SceneManager.prototype.startRender = function () {
 };
 
 Level5.SceneManager.prototype.resetLight = function () {
+  var dialog = document.getElementById('renderDialog');
+  dialog.style.visibility = 'visible';
+
   var iterateChildren = (function (light) {
     for (var i in light.children) {
       iterateChildren(light.children[i]);
@@ -79,4 +82,6 @@ Level5.SceneManager.prototype.resetLight = function () {
   for (var i in this.lights) {
     this.lights[i].shoot(this.scene);
   }
+
+  dialog.style.visibility = 'hidden';
 };

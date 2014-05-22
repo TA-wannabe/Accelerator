@@ -95,6 +95,9 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
     else if (state === Level5.InputState.AddLightMode) {
       this.sceneManager.setTrackballControlEnabled(false);
 
+      var dialog = document.getElementById('renderDialog');
+      dialog.style.visibility = 'visible';
+
       var cameraLookAt = new THREE.Vector3(0, 0, -1);
       cameraLookAt.applyQuaternion(camera.quaternion);
       var whiteRay = Level5.Light.createWhiteRay(
@@ -104,6 +107,8 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
       whiteRay.forEach((function (ray) {
         this.sceneManager.addLight(ray);
       }).bind(this));
+
+      dialog.style.visibility = 'hidden';
     }
     // object picking mode
     else if (state === Level5.InputState.Normal) {
@@ -141,7 +146,7 @@ Level5.InputHandler.prototype.delegateInput = function (window, scene, camera) {
       case 82: /* r */
         this.sceneManager.resetLight();
         break;
-      case 65: /* a */
+      case 66: /* b */
         this.state.set(Level5.InputState.AddBubbleMode);
         break;
       case 76: /* l */

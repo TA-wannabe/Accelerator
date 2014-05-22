@@ -31,7 +31,7 @@ Level5.Light.createWhiteRay = function (startPoint, direction) {
       waveLength: i,
       startPoint: startPoint,
       direction: direction,
-      life: 9
+      life: Level5.Config.lightLifetime
     }));
   }
   return whiteRay;
